@@ -69,7 +69,7 @@ void createClient() {
 void deleteClient() {
 	int rc;
 	char* client_id = new char[10];
-	std::cout<<"Please input client id!\nadmin->";
+	printf("Please input client id!\nadmin->");
 	std::cin>>client_id;
 	if(sqlite3_prepare(conn, selectClientById, strlen (selectClientById), &stmt, NULL) == SQLITE_OK) 
 		if(sqlite3_bind_text(stmt, 1, client_id, -1, 0)== SQLITE_OK) {
@@ -94,7 +94,7 @@ int addMoney(){
 	scanf("%d", &balance);
 	int fee = (currentTransaction + 1 - totalTransaction) * monthlyQuota;
 	if(currentTransaction + 1 > totalTransaction && balance + currentBalance - fee < 0){
-		cout << "It is not possible to commit the transaction";
+		printf("It is not possible to commit the transaction\n");
 		return -1;
 	}
 	currentTransaction++;
@@ -111,7 +111,7 @@ int withdrawMoney(){
 	scanf("%d", &balance);
 	int fee = (currentTransaction + 1 - totalTransaction) * monthlyQuota;
 	if(currentTransaction + 1 > totalTransaction && currentBalance - balance - fee < 0){
-		cout << "It is not possible to commit the transaction";
+		printf("It is not possible to commit the transaction\n");
 		return -1;
 	}
 	currentTransaction++;
@@ -128,12 +128,12 @@ void adminActions(){
 	bool isExit=false;
 	int numberOfOperation=0;
 	while(!isExit){
-		cout << "Operations:" << endl;
-		cout <<admin_create_client<<" "<< create_client << endl;
-		cout <<admin_delete_client<<" "<< delete_client << endl;
-		cout <<admin_add_account<<" "<< add_account << endl;
-		cout <<admin_exit<<" "<< exit<<endl;
-		cout << "Please, enter a number of operation." << endl;
+		printf( "Operations:\n" );
+		printf("%d %s\n",admin_create_client, create_client );
+		printf("%d %s\n",admin_delete_client, delete_client);
+		printf("%d %s\n",admin_add_account, add_account );
+		printf("%d %s\n",admin_exit, exit);
+		printf("Please, enter a number of operation.\n");
 		scanf("%d",&numberOfOperation);
 		switch(numberOfOperation){
 			case admin_create_client:
@@ -146,7 +146,7 @@ void adminActions(){
 				addAccount();
 			break;
 			case admin_exit:
-				cout<<"Good bye!"<<endl;
+				printf("Good buy!\n");
 				roleIdentified=UNKNOWN;
 				isExit=true;
 			break;
@@ -184,14 +184,14 @@ void operatorActions(){
 	data = "Callback function called\n";
 	rc = sqlite3_open("12.db",&conn);
 	if(rc){
-		printf("Error");
+		printf("Error\n");
 		sqlite3_close(conn);
 		return;
 	}
 	//system data
 	rc = sqlite3_exec(conn,"select total_transactions, monthly_quota from system_config",setSystemConfig, (void*)data, &zErrMsg);
 	if(rc){
-		cout<<"Error!"<<endl;
+		printf("Error!\n");
 		sqlite3_close(conn);
 		return;
 	}
@@ -199,36 +199,36 @@ void operatorActions(){
 	sprintf(bufferSelect,"select client_id,first_name, last_name from client");
 	rc = sqlite3_exec(conn,bufferSelect,showList, (void*)data, &zErrMsg);
 	if(rc){
-		cout<<"Error!"<<endl;
+		printf("Error!\n");
 		sqlite3_close(conn);
 		return;
 	}
-	cout<<"Enter id of client"<<endl;
+	printf("Enter id of client\n");
 	scanf("%d",&idClient);
 	char bufferAccount[500];
 	sprintf(bufferAccount,"select account_id,balance, current_transactions from account where client_id='%d'",idClient);
 	rc = sqlite3_exec(conn,bufferAccount,showList, (void*)data, &zErrMsg);
 	if(rc){
-		cout<<"Error!"<<endl;
+		printf("Error!\n");
 		sqlite3_close(conn);
 		return;
 	}
-	cout<<"Enter id of client`s account"<<endl;
+	printf("Enter id of client`s account\n");
 	scanf("%d",&idAccount);
 	char bufferGetBalance[500];
 	sprintf(bufferGetBalance,"select balance, current_transactions from account where account_id='%d'",idAccount);
 	rc = sqlite3_exec(conn,bufferGetBalance,getCurrentBalance, (void*)data, &zErrMsg);
 	if(rc){
-		cout<<"Error!"<<endl;
+		printf("Error!\n");
 		sqlite3_close(conn);
 		return;
 	}
 	int numberOfOperation=0;
 	bool isExit=false;
-	cout <<"Operations:" << endl;
-	cout <<operator_add_money <<" "<< add_money << endl;
-	cout <<operator_withdraw_money <<" "<< withdraw_money<< endl;
-	cout <<operator_exit<<" "<< exit<<endl;
+	printf("Operations:\n");
+	printf("%d %s\n",operator_add_money,add_money);
+	printf("%d %s\n",operator_withdraw_money ,withdraw_money);
+	printf("%d %s\n",operator_exit, exit);
 	scanf("%d",&numberOfOperation);
 	int result = 0;
 	switch(numberOfOperation){
@@ -239,12 +239,12 @@ void operatorActions(){
 		result = withdrawMoney();
 		break;
 		case operator_exit:
-		cout<<"Good bye!"<<endl;
+		printf("Good bye!\n");
 		roleIdentified=UNKNOWN;
 		isExit=true;
 		break;
 		default:
-		cout << "Unknown operation.Please, try again." << endl;
+		printf("Unknown operation.Please, try again.\n");
 		break;
 	}
 	//------------
@@ -255,7 +255,7 @@ void operatorActions(){
 		if(rc){
 		printf("Error");
 		}else{
-			cout<<"Operation is executed successfully!"<<endl;
+			printf("Operation is executed successfully!\n");
 		}
 	}
 	sqlite3_close(conn);
@@ -273,7 +273,7 @@ void chooseOperations(){
 				operatorActions();
 				break;
 			case(UNKNOWN):
-				cout<<"ERROR!You are not registred in system!"<<endl;
+				printf("ERROR!You are not registred in system!\n");
 				break;
 		}
 }
@@ -317,10 +317,10 @@ void main(){
 	bool isExit=false;
 	int numberOfOperation;
 	while(!isExit){
-		cout << "Welcome to banking system!\nActions:" << endl;
-		cout <<login_action <<" "<< login_string << endl;
-		cout <<exit_action<<" "<< exit << endl;
-		cout << "Please, enter a number of action." << endl;
+		printf("Welcome to banking system!\nActions:\n");
+		printf("%d %s\n",login_action, login_string);
+		printf("%d %s\n",exit_action,exit);
+		printf("Please, enter a number of action.\n") ;
 		scanf("%d",&numberOfOperation);
 
 		switch(numberOfOperation){
@@ -329,10 +329,10 @@ void main(){
 			break;
 		case exit_action:
 			isExit=true;
-			cout<< "Good buy!"<<endl;
+			printf("Good buy!\n");
 			break;
 		default:
-			cout << "Unknown operation.Please, try again." << endl;
+			printf("Unknown operation.Please, try again.\n");
 			break;
 		}
 	}
