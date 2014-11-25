@@ -317,7 +317,7 @@ void main(){
 	bool isExit=false;
 	int numberOfOperation;
 	while(!isExit){
-		cout << "Welcome to our system!\nActions:" << endl;
+		cout << "Welcome to banking system!\nActions:" << endl;
 		cout <<login_action <<" "<< login_string << endl;
 		cout <<exit_action<<" "<< exit << endl;
 		cout << "Please, enter a number of action." << endl;
