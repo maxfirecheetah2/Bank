@@ -10,7 +10,7 @@ using namespace std;
 #define withdraw_money "withdraw money"
 #define view_accounts "view accounts"
 #define login_string "Log In"
-#define exit "Exit"
+#define exit "Exit "
 
 #define admin_create_client 1
 #define admin_delete_client 2
