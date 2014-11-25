@@ -9,7 +9,8 @@ using namespace std;
 #define add_money "add money"
 #define withdraw_money "withdraw money"
 #define view_accounts "view accounts"
-#define exit "exit"
+#define login_string "Log In"
+#define exit "Exit"
 
 #define admin_create_client 1
 #define admin_delete_client 2
@@ -19,6 +20,10 @@ using namespace std;
 #define operator_add_money 1
 #define operator_withdraw_money 2
 #define operator_exit 3
+
+#define login_action 1
+#define exit_action 2
+
 sqlite3 *conn;
 sqlite3_stmt * stmt;
 char* insert = "INSERT INTO client (CLIENT_ID,FIRST_NAME,LAST_NAME) VALUES (?, ?, ?);";
@@ -38,9 +43,9 @@ void connection() {
     rc = sqlite3_open("12.db", &conn);
     if(rc){
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(conn));
-    }else{ 
+    }/*else{ 
       fprintf(stderr, "Opened database successfully\n");
-    }   
+    }  */ 
 }
 void createClient() {
 	int rc;
@@ -256,18 +261,80 @@ void operatorActions(){
 	sqlite3_close(conn);
 //--------------------
 }
-void main(){
-	roleIdentified=ADMIN;
+
+void chooseOperations(){
 	switch(roleIdentified){
-		case(ADMIN):
-		adminActions();
-		break;
-		case(OPERATOR):
-		operatorActions();
-		break;
-		case(UNKNOWN):
-		cout<<"ERROR!You are not registred in system!"<<endl;
-		break;
+			case(ADMIN):
+				printf("You are admin.\n");
+				adminActions();
+				break;
+			case(OPERATOR):
+				printf("You are operator.\n");
+				operatorActions();
+				break;
+			case(UNKNOWN):
+				cout<<"ERROR!You are not registred in system!"<<endl;
+				break;
+		}
+}
+
+static int authorization(void *data, int argc, char **argv, char **azColName){
+	string role=argv[0];
+	if(role=="admin")
+		roleIdentified=ADMIN;
+	if(role=="operator")
+		roleIdentified=OPERATOR;
+	return 0;
+}
+
+void authentication(){
+	connection();
+	char *zErrMsg = 0;
+	const char* data = "Callback function called\n";
+   	
+	char login[20];
+	char password[20];
+	printf("Enter login: ");
+	scanf("%s", login);
+	printf("Enter password: ");
+	scanf("%s", password);
+	
+	char buffer [100];
+	sprintf(buffer,"select role from bank_personal where login='%s' and password='%s'",login, password);
+
+	int rc = sqlite3_exec(conn,buffer,authorization, (void*)data, &zErrMsg);
+	if(rc){
+		printf("Error");
+		return ;
 	}
-	//system("pause");
+	sqlite3_close(conn);
+	chooseOperations();
+}
+
+
+
+void main(){
+	bool isExit=false;
+	int numberOfOperation;
+	while(!isExit){
+		cout << "Welcome to our system!\nActions:" << endl;
+		cout <<login_action <<" "<< login_string << endl;
+		cout <<exit_action<<" "<< exit << endl;
+		cout << "Please, enter a number of action." << endl;
+		scanf("%d",&numberOfOperation);
+
+		switch(numberOfOperation){
+		case login_action:
+			authentication();
+			break;
+		case exit_action:
+			isExit=true;
+			cout<< "Good buy!"<<endl;
+			break;
+		default:
+			cout << "Unknown operation.Please, try again." << endl;
+			break;
+		}
+	}
+	system("pause");
 }
