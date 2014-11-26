@@ -6,6 +6,8 @@ using namespace std;
 #define create_client "create client"
 #define delete_client "delete client"
 #define add_account "add account"
+#define delete_account "delete account"
+#define add_account "add account"
 #define add_money "add money"
 #define withdraw_money "withdraw money"
 #define view_accounts "view accounts"
@@ -15,7 +17,8 @@ using namespace std;
 #define admin_create_client 1
 #define admin_delete_client 2
 #define admin_add_account 3
-#define admin_exit 4
+#define admin_delete_account 4
+#define admin_exit 5
 
 #define operator_add_money 1
 #define operator_withdraw_money 2
@@ -27,6 +30,9 @@ using namespace std;
 sqlite3 *conn;
 sqlite3_stmt * stmt;
 char* insert = "INSERT INTO client (CLIENT_ID,FIRST_NAME,LAST_NAME) VALUES (?, ?, ?);";
+char* insertAccount = "INSERT INTO ACCOUNT (CLIENT_ID) VALUES (?);";
+char* selectAccountById = "SELECT * FROM account WHERE account_id=?;";
+char* deleteAccountById = "DELETE FROM account WHERE account_id=?;";
 char* selectClientById = "SELECT * FROM client WHERE client_id=?;";
 char* selectAllClient = "SELECT * FROM client;";
 char* deleteClientById = "DELETE FROM client WHERE client_id=?;";
@@ -86,7 +92,90 @@ void deleteClient() {
 				printf("client didn't deleted, try again!\n");
 		}
 }
-void addAccount(){}
+void addAccount()
+{
+	int rc;
+	int client_id;
+	
+	printf("Please input client id:\nadmin->");
+	scanf("%d", &client_id);
+//	std::cin >> client_id;
+	char query[50];
+	_itoa(client_id, query, 10);
+
+	if (sqlite3_prepare(conn, selectClientById, strlen(selectClientById), &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_bind_text(stmt, 1, query, -1, 0) == SQLITE_OK)  {
+			rc = sqlite3_step(stmt);
+			
+		}
+	}
+	else{
+		printf("input error, try again!\n");
+		printf("\n");
+	}
+
+	if (rc != 100)
+	{
+		printf("no such client\n");
+		printf("\n");
+		return;
+	}
+	if (sqlite3_prepare(conn, insertAccount, strlen(insertAccount), &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_bind_text(stmt, 1, query, -1, 0) == SQLITE_OK)  {
+			rc = sqlite3_step(stmt);
+			printf("account added\n");
+			printf("\n");
+		}
+	}
+	else{
+		printf("input error, try again!\n");
+		printf("\n");
+	}
+	sqlite3_reset(stmt);
+}
+
+void deleteAccount()
+{
+	int rc;
+	int account_id;
+
+	printf("Please input account id:\nadmin->");
+	scanf("%d", & account_id);
+//	std::cin >> account_id;
+	char query[50];
+	_itoa(account_id, query, 10);
+
+	if (sqlite3_prepare(conn, selectAccountById, strlen(selectAccountById), &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_bind_text(stmt, 1, query, -1, 0) == SQLITE_OK)  {
+			rc = sqlite3_step(stmt);
+
+		}
+	}
+	else {
+		printf("input error, try again!\n");
+		printf("\n");
+	}
+
+	if (rc != 100)
+	{
+		printf("no such account\n");
+		printf("\n");
+		return;
+	}
+	if (sqlite3_prepare(conn, deleteAccountById, strlen(deleteAccountById), &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_bind_text(stmt, 1, query, -1, 0) == SQLITE_OK)  {
+			rc = sqlite3_step(stmt);
+			printf("account deleted\n");
+			printf("\n");
+		}
+	}
+	else{
+		printf("input error, try again!\n");
+		printf("\n");
+	}
+	sqlite3_reset(stmt);
+
+}
 int balance = 0;
 int addMoney(){
 	balance=0;
@@ -132,9 +221,11 @@ void adminActions(){
 		printf("%d %s\n",admin_create_client, create_client );
 		printf("%d %s\n",admin_delete_client, delete_client);
 		printf("%d %s\n",admin_add_account, add_account );
+		printf("%d %s\n",admin_delete_account, delete_account);
 		printf("%d %s\n",admin_exit, exit);
-		printf("Please, enter a number of operation.\n");
+		printf("Please, enter a code of operation.\n");
 		scanf("%d",&numberOfOperation);
+		
 		switch(numberOfOperation){
 			case admin_create_client:
 				createClient();
