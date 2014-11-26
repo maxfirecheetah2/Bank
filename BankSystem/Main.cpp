@@ -36,6 +36,7 @@ char* deleteAccountById = "DELETE FROM account WHERE account_id=?;";
 char* selectClientById = "SELECT * FROM client WHERE client_id=?;";
 char* selectAllClient = "SELECT * FROM client;";
 char* deleteClientById = "DELETE FROM client WHERE client_id=?;";
+char* deleteAccountByClientId = "DELETE FROM account WHERE client_id=?;";
 enum roleInSystem{UNKNOWN,ADMIN,OPERATOR};
 roleInSystem roleIdentified;
 int currentBalance;
@@ -75,7 +76,7 @@ void createClient() {
 void deleteClient() {
 	int rc;
 	char* client_id = new char[10];
-	printf("Please input client id!\nadmin->");
+	std::cout<<"Please input client id!\nadmin->";
 	std::cin>>client_id;
 	if(sqlite3_prepare(conn, selectClientById, strlen (selectClientById), &stmt, NULL) == SQLITE_OK) 
 		if(sqlite3_bind_text(stmt, 1, client_id, -1, 0)== SQLITE_OK) {
@@ -85,8 +86,12 @@ void deleteClient() {
 				sqlite3_reset(stmt);
 				if((rc=sqlite3_prepare(conn, deleteClientById, strlen (deleteClientById), &stmt, NULL)) == SQLITE_OK) 
 					if(sqlite3_bind_text(stmt, 1, client_id, -1, 0)== SQLITE_OK) 
-						if(sqlite3_step(stmt)==SQLITE_DONE)
-							printf("client deleted!\n");
+						if(sqlite3_step(stmt)==SQLITE_DONE) {
+							if((rc=sqlite3_prepare(conn, deleteAccountByClientId, strlen (deleteAccountByClientId), &stmt, NULL)) == SQLITE_OK) 
+								if(sqlite3_bind_text(stmt, 1, client_id, -1, 0)== SQLITE_OK) 
+									if(sqlite3_step(stmt)==SQLITE_DONE) 
+										printf("client deleted!\n");
+						}
 			}	
 			else
 				printf("client didn't deleted, try again!\n");
