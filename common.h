@@ -3,6 +3,9 @@
 #include <malloc.h>
 #include <string.h>
 
+#ifndef QUERY
+#define QUERY const char*
+#endif
 
 #include "sqlite3.h"
 #include "conn.h"

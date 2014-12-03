@@ -3,7 +3,7 @@
 
 
 //for authentification
-const char* SELECT_PASSWORD_BY_NAME = "SELECT password, role FROM bank_personal WHERE login=?;";
+QUERY SELECT_PASSWORD_BY_NAME = "SELECT password, role FROM bank_personal WHERE login=?;";
 
 enum roleInSystem role_in_system [] = { ROLE_UNKNOWN, ROLE_ADMIN, ROLE_OPERATOR };
 struct currentUser cu;

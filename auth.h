@@ -1,7 +1,7 @@
 
 
 //for authentification
-extern const char* SELECT_PASSWORD_BY_NAME;
+extern QUERY SELECT_PASSWORD_BY_NAME;
 
 enum roleInSystem { ROLE_UNKNOWN, ROLE_ADMIN, ROLE_OPERATOR };
 extern enum roleInSystem role_in_system [];

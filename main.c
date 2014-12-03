@@ -1,10 +1,7 @@
 #include "common.h"
 
-
-
 int main()
 {
-	//cur_user.roleIdentified = ROLE_ADMIN;
 	connection(); 
 	for(;;)
 	{	
