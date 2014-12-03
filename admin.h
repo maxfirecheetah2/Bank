@@ -22,6 +22,7 @@ extern const char* SELECT_ALL_CLIENTS;
 extern const char* DELETE_CLIENT_BY_ID;
 
 void admin_action_menu();
+void admin_actions();
 
 void create_client();
 void delete_client();

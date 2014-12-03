@@ -74,6 +74,42 @@ void delete_client()
 	sqlite3_reset(stmt);
 }
 
+void admin_actions(){
+
+	int isExit = 0;
+	admin_action_menu();
+	while(!isExit)
+	{
+		int current_action = -1;
+		fscanf(stdin, "%d", &current_action);
+		fprintf(stdout, "%d\n", current_action);
+		if(current_action >= 1 && current_action <= NUMBER_OF_ADMIN_ACTIONS)
+		{
+			adminActions = admin_acts[current_action - 1];
+		}
+		switch(adminActions)
+		{
+			case ADMIN_CREATE_CLIENT:
+				create_client();
+				break;
+			case ADMIN_DELETE_CLIENT:
+				delete_client();
+				break;
+			case ADMIN_ADD_ACCOUNT:
+				//add_account();
+				break;
+			case ADMIN_EXIT:
+				fprintf(stdout, "Session was ended...");
+				logout();
+				isExit = 1;
+				break;
+			default:
+				fprintf(stdout, "Unknown operation.Try again.");
+				break;
+		}
+	}
+}
+
 
 void admin_action_menu()
 {
