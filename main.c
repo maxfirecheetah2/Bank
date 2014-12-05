@@ -12,7 +12,7 @@ int main()
 				admin_actions();
 				break;
 			case(ROLE_OPERATOR):
-				//operator_actions();
+				operator_actions();
 				break;
 			case(ROLE_UNKNOWN):
 				fprintf(stdout, "Authentification failed! Try again.");

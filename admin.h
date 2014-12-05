@@ -1,7 +1,7 @@
 //To add an action we must add it to both enum AdminActions
 //and array admin_acts !!IN THE SAME ORDER!!.
 //We  must also increment predefined value NUMBER_OF_ADMIN_ACTIONS
-#define NUMBER_OF_ADMIN_ACTIONS 6
+#define NUMBER_OF_ADMIN_ACTIONS 7
 
 enum AdminActions
 {
@@ -10,6 +10,7 @@ enum AdminActions
 	ADMIN_ADD_ACCOUNT,
 	ADMIN_DELETE_ACCOUNT,
 	ADMIN_LIST_CLIENTS,
+	ADMIN_LIST_ACCOUNTS,
 	ADMIN_EXIT
 };
 
@@ -20,6 +21,7 @@ extern QUERY ADD_CLIENT;
 extern QUERY ADD_ACCOUNT;
 extern QUERY SELECT_CLIENT_BY_ID;
 extern QUERY SELECT_ALL_CLIENTS;
+extern QUERY SELECT_ALL_ACCOUNTS;
 extern QUERY DELETE_CLIENT_BY_ID;
 extern QUERY DELETE_ACCOUNT_BY_ID;
 
@@ -30,3 +32,5 @@ void create_client();
 void delete_client();
 void create_account();
 void delete_account();
+void show_client_list();
+void show_account_list();

@@ -8,6 +8,7 @@ enum AdminActions admin_acts[] =
 	ADMIN_ADD_ACCOUNT,
 	ADMIN_DELETE_ACCOUNT,
 	ADMIN_LIST_CLIENTS,
+	ADMIN_LIST_ACCOUNTS,
 	ADMIN_EXIT
 };
 enum AdminActions adminActions;
@@ -16,6 +17,7 @@ QUERY ADD_CLIENT = "INSERT INTO client (CLIENT_ID,FIRST_NAME,LAST_NAME) VALUES (
 QUERY ADD_ACCOUNT = "INSERT INTO account (client_id) VALUES (?);";
 QUERY SELECT_CLIENT_BY_ID = "SELECT * FROM client WHERE client_id=?;";
 QUERY SELECT_ALL_CLIENTS = "SELECT * FROM client;";
+QUERY SELECT_ALL_ACCOUNTS = "SELECT * FROM account a INNER JOIN client c ON a.client_id=c.client_id;";
 QUERY DELETE_CLIENT_BY_ID = "DELETE FROM client WHERE client_id=?;";
 QUERY DELETE_ACCOUNT_BY_ID = "DELETE FROM account WHERE account_id=?;";
 
@@ -27,7 +29,7 @@ void create_client()
 	char* first_name = (char*)malloc(sizeof(char) * 128);
 	char* last_name = (char*)malloc(sizeof(char) * 128);
 
-	fprintf(stdout, "\Please input first name of client\nadmin->");
+	fprintf(stdout, "\nPlease input first name of client\nadmin->");
 	fscanf(stdin, "%s", first_name);
 	fprintf(stdout, "Please input last name of client\nadmin->");
 	fscanf(stdin,"%s", last_name);
@@ -81,7 +83,7 @@ void create_account()
 	int rc;
     int client_id;
 
-	fprintf(stdout, "\Please input a client id\nadmin->");
+	fprintf(stdout, "\nPlease input a client id\nadmin->");
 	fscanf(stdin, "%d", &client_id);
 	
 	if(sqlite3_prepare(conn, ADD_ACCOUNT, strlen(ADD_ACCOUNT), &stmt, NULL) == SQLITE_OK) 
@@ -126,15 +128,91 @@ void delete_account()
 
 }
 
+void show_client_list()
+{
+	int rc;
+	char* first_name = (char*)malloc(sizeof(char) * 128);
+	char* last_name = (char*)malloc(sizeof(char) * 128);
+	char* id = (char*)malloc(sizeof(char) * 128);
+	if ( sqlite3_prepare(conn, SELECT_ALL_CLIENTS, strlen(SELECT_ALL_CLIENTS),
+		&stmt, 0 ) == SQLITE_OK ) 
+    {
+       // int ctotal = sqlite3_column_count(stmt);
+		fprintf(stdout, "\nClient list\n");
+        do        
+        {
+            rc = sqlite3_step(stmt);
+            if ( rc == SQLITE_ROW ) 
+            {
+				id = (char*)sqlite3_column_text(stmt, 0);
+				first_name = (char*)sqlite3_column_text(stmt, 1);
+				last_name = (char*)sqlite3_column_text(stmt, 2);
+				fprintf(stdout, "Id: %s, first name: %s, last name: %s \n", id,  first_name, last_name);
+            }    
+        } while(rc != SQLITE_DONE && rc!=SQLITE_ERROR);
+		fprintf(stdout, "\n");
+	} 
+	else 
+	{
+		fprintf(stdout, "No clients were found!");
+	}
+	free(first_name);
+	free(last_name);
+	free(id);
+	sqlite3_reset(stmt);
+}
+void show_account_list()
+{
+	int rc;
+	char* first_name = (char*)malloc(sizeof(char) * 128);
+	char* last_name = (char*)malloc(sizeof(char) * 128);
+	char* client_id = (char*)malloc(sizeof(char) * 128);
+	char* transactions = (char*)malloc(sizeof(char) * 128);
+	char* balance = (char*)malloc(sizeof(char) * 128);
+	char* account_id = (char*)malloc(sizeof(char) * 128);
+
+	if ( sqlite3_prepare(conn, SELECT_ALL_ACCOUNTS, strlen(SELECT_ALL_ACCOUNTS),
+		&stmt, 0 ) == SQLITE_OK ) 
+    {
+        int ctotal = sqlite3_column_count(stmt);
+		fprintf(stdout, "\nAccount list\n");
+        do        
+        {
+            rc = sqlite3_step(stmt);
+            if ( rc == SQLITE_ROW ) 
+            {
+				account_id = (char*)sqlite3_column_text(stmt, 0);
+				client_id = (char*)sqlite3_column_text(stmt, 1);
+				balance = (char*)sqlite3_column_text(stmt, 2);
+				transactions = (char*)sqlite3_column_text(stmt, 3);
+				first_name = (char*)sqlite3_column_text(stmt, 5);
+				last_name = (char*)sqlite3_column_text(stmt, 6);
+				fprintf(stdout, "Id: %s, balance: %s, current transactions: %s \n\t", account_id,  balance, transactions);
+				fprintf(stdout, "Client name: %s, client surname: %s\n", first_name, last_name);
+            }    
+        } while(rc != SQLITE_DONE && rc!=SQLITE_ERROR);
+		fprintf(stdout, "\n");
+	} 
+	else 
+	{
+		fprintf(stdout, "\nNo accounts were found!\n");
+	}
+	free(first_name);
+	free(last_name);
+	free(client_id);
+	free(balance);
+	free(transactions);
+	free(account_id);
+	sqlite3_reset(stmt);
+}
 void admin_actions(){
 
-	int isExit = 0;
-	admin_action_menu();
+	int isExit = 0;	
 	while(!isExit)
 	{
 		int current_action = -1;
+		admin_action_menu();
 		fscanf(stdin, "%d", &current_action);
-		//fprintf(stdout, "%d\n", current_action);
 		if(current_action >= 1 && current_action <= NUMBER_OF_ADMIN_ACTIONS)
 		{
 			adminActions = admin_acts[current_action - 1];
@@ -152,6 +230,12 @@ void admin_actions(){
 				break;
 			case ADMIN_DELETE_ACCOUNT:
 				delete_account();
+				break;
+			case ADMIN_LIST_CLIENTS:
+				show_client_list();
+				break;
+			case ADMIN_LIST_ACCOUNTS:
+				show_account_list();
 				break;
 			case ADMIN_EXIT:
 				fprintf(stdout, "Session was ended...");
@@ -174,6 +258,7 @@ void admin_action_menu()
 	fprintf(stdout, "\n3 : add account");
 	fprintf(stdout, "\n4 : delete account");
 	fprintf(stdout, "\n5 : list clients");
-	fprintf(stdout, "\n6 : exit");
+	fprintf(stdout, "\n6 : list accounts");
+	fprintf(stdout, "\n7 : exit");
 	fprintf(stdout, "\nPlease, enter an operation number\n");
 }
