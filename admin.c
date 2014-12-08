@@ -158,7 +158,7 @@ void show_client_list()
 	}
 	/*
 	free(first_name);  
-	free(last_name);
+	free(last_name);   
 	free(id);
 	*/
 	sqlite3_reset(stmt);
