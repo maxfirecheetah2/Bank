@@ -35,10 +35,10 @@ void show_account(int account_id)
 			fprintf(stdout, "Client name: %s, client surname: %s\n", first_name, last_name);			
 		}
 	}
-	free(first_name);
+	/*free(first_name);
 	free(last_name);
 	free(transactions);	
-	free(balance);
+	free(balance);*/
 	sqlite3_reset(stmt);
 
 }

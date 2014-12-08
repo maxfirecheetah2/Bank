@@ -156,9 +156,11 @@ void show_client_list()
 	{
 		fprintf(stdout, "No clients were found!");
 	}
+	/*
 	free(first_name);
 	free(last_name);
 	free(id);
+	*/
 	sqlite3_reset(stmt);
 }
 void show_account_list()
@@ -197,12 +199,14 @@ void show_account_list()
 	{
 		fprintf(stdout, "\nNo accounts were found!\n");
 	}
+	/*
 	free(first_name);
 	free(last_name);
 	free(client_id);
 	free(balance);
 	free(transactions);
 	free(account_id);
+	*/
 	sqlite3_reset(stmt);
 }
 void admin_actions(){
