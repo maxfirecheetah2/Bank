@@ -157,7 +157,7 @@ void show_client_list()
 		fprintf(stdout, "No clients were found!");
 	}
 	/*
-	free(first_name);
+	free(first_name);  
 	free(last_name);
 	free(id);
 	*/
